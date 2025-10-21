@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b4dx52ok0i0oh"]
+
+[ext_resource type="Script" uid="uid://ceo7rcdm84ktl" path="res://boxes/Box.gd" id="1_ucmmm"]
+[ext_resource type="Texture2D" uid="uid://1jqovjqrv1ed" path="res://sprites/boxes.png" id="2_toq7b"]
+
+[node name="Box" type="Node2D"]
+script = ExtResource("1_ucmmm")
+size = Vector2(3, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 10
+texture_filter = 1
+rotation = 1.5707964
+texture = ExtResource("2_toq7b")
+centered = false
+offset = Vector2(-16, -32)
+flip_v = true
+region_enabled = true
+region_rect = Rect2(80, 0, 16, 48)

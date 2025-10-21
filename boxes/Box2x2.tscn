@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c6noa7fynvfyw"]
+
+[ext_resource type="Script" uid="uid://ceo7rcdm84ktl" path="res://boxes/Box.gd" id="1_cergi"]
+[ext_resource type="Texture2D" uid="uid://daximaw6cunhr" path="res://sprites/boxe2x2.png" id="2_cergi"]
+
+[node name="Box" type="Node2D"]
+script = ExtResource("1_cergi")
+size = Vector2(2, 2)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 10
+texture_filter = 1
+position = Vector2(16, 16)
+texture = ExtResource("2_cergi")
+offset = Vector2(-16, -16)
+region_rect = Rect2(0, 0, 32, 48)

@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://c2yuvhatp48wk"]
+
+[ext_resource type="Script" uid="uid://bk0g2hp1qnwb1" path="res://LevelSelect.gd" id="1_ardn0"]
+[ext_resource type="Texture2D" uid="uid://dbd70rpnx7iwa" path="res://sprites/goal.png" id="1_sf6f5"]
+
+[sub_resource type="SystemFont" id="SystemFont_ardn0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_q3t17"]
+font = SubResource("SystemFont_ardn0")
+font_size = 64
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ardn0")
+
+[node name="LevelNameLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 0.11199188
+grow_horizontal = 2
+grow_vertical = 2
+text = "Level 0"
+label_settings = SubResource("LabelSettings_q3t17")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(420, 124)
+texture = ExtResource("1_sf6f5")

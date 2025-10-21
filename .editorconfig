@@ -1,0 +1,9 @@
+root = true
+
+[*.gd]
+indent_style = tab
+tab_width = 4
+
+[.editorconfig]
+indent_style = space
+indent_size = 4
