@@ -5,6 +5,7 @@ extends Node2D
 
 @onready var floors : TileMapLayer = $Floors
 @onready var walls : TileMapLayer = $Walls
+@onready var holes : TileMapLayer = $Holes
 @onready var goals : TileMapLayer = $Goals
 @onready var player_node : Node2D = $Player
 @onready var boxes_root : Node2D = $Boxes
@@ -97,18 +98,22 @@ func _unhandled_input(ev):
 func attempt_move(dir : Vector2) -> void:
 	last_dir = dir
 	var to_cell = player_cell + dir
-
+	
 	# Check for wall
 	if walls.get_cell_source_id(Vector2i(to_cell)) != -1:
 		return
-
+	
+	# Check for holes
+	if holes.get_cell_source_id(Vector2i(to_cell)) != -1:
+		return
+	
 	# Check for box at target cell
 	var box_to_push = null
 	for b in boxes:
 		if to_cell in b.get_occupied_cells():
 			box_to_push = b
 			break
-
+	
 	if box_to_push:
 		# Calculate new cells for the box after push
 		var new_cells = []
@@ -124,20 +129,54 @@ func attempt_move(dir : Vector2) -> void:
 		# Move box
 		box_to_push.cell += dir
 		box_to_push.move_to_cell(box_to_push.cell, floors, step_time)
+		
+		# Check if box is on a hole
+		var occupied_cells = box_to_push.get_occupied_cells()
+		var all_on_holes = true
+		for c in occupied_cells:
+			if holes.get_cell_source_id(Vector2i(c)) == -1:
+				all_on_holes = false
+				break
+
+		if all_on_holes:
+			var tween = box_to_push.move_to_cell(box_to_push.cell, floors, step_time)
+			tween.tween_callback(Callable(self, "_remove_box_and_hole_multi").bind(box_to_push, occupied_cells))
+		else:
+			box_to_push.move_to_cell(box_to_push.cell, floors, step_time)
+		# # Check if box is on a hole
+		# var cell = Vector2i(box_to_push.cell)
+		# # print(cell)
+		# var tween = box_to_push.move_to_cell(box_to_push.cell, floors, step_time)
+		# if holes.get_cell_source_id(cell) != -1:
+		# 	# Remove box and hole after animation
+		# 	tween.tween_callback(Callable(self, "_remove_box_and_hole").bind(box_to_push, cell))
+		
 		# Move player
 		player_cell = to_cell
 		_move_player_to_cell(to_cell, step_time)
 		return
-
+	
 	# If no box, check if cell is blocked by any box
 	for b in boxes:
 		if to_cell in b.get_occupied_cells():
 			return
-
+	
 	# Move player
 	player_cell = to_cell
 	_move_player_to_cell(to_cell, step_time)
-	
+
+func _remove_box_and_hole(box, cell):
+	box.queue_free()
+	boxes.erase(box)
+	holes.set_cell(cell, -1) # -1 erases tol
+	# floors.set_cell(cell, 1) # already added bellow
+
+func _remove_box_and_hole_multi(box, cells):
+	box.queue_free()
+	boxes.erase(box)
+	for c in cells:
+		holes.set_cell(Vector2i(c), -1)
+
 # Move Player To Cell
 func _move_player_to_cell(cell: Vector2, t: float) -> void:
 	var target = floors.map_to_local(cell) + floors.tile_set.tile_size * 0.5
