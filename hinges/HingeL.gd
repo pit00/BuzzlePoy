@@ -1,0 +1,128 @@
+extends Node2D
+
+var pivot: Vector2i = Vector2i(2, 2) # Set as needed
+var orientation: int = 0 # 0=up, 1=right, 2=down, 3=left
+
+const L_OFFSETS = [
+	[Vector2i(0,0), Vector2i(0,-1), Vector2i(1,0)],   # 0°
+	[Vector2i(0,0), Vector2i(1,0), Vector2i(0,1)],    # 90°
+	[Vector2i(0,0), Vector2i(0,1), Vector2i(-1,0)],   # 180°
+	[Vector2i(0,0), Vector2i(-1,0), Vector2i(0,-1)]   # 270°
+]
+
+func set_hinge_cell_ui(cell_pos: Vector2, tilemap: TileMapLayer):
+	pivot = (cell_pos / 16) - Vector2(1, 1)
+	position = tilemap.map_to_local(pivot) + tilemap.tile_set.tile_size * 0.5
+
+func get_occupied_cells() -> Array:
+	var cells = []
+	for offset in L_OFFSETS[orientation]:
+		cells.append(pivot + offset)
+		# print(cells)
+	return cells
+
+func update_visual():
+	# Move the node to the pivot position
+	# (if needed, but usually only rotation is needed)
+	if has_node("Sprite2D"):
+		$Sprite2D.rotation_degrees = 90 * orientation
+
+func can_rotate(clockwise: bool, boxes: Array, hinges: Array, walls: Array) -> bool:
+	var old_orientation = orientation
+	var new_orientation = (orientation + (1 if clockwise else 3)) % 4
+	var old_offsets = L_OFFSETS[old_orientation]
+	var new_offsets = L_OFFSETS[new_orientation]
+	var sweep_cells = []
+	
+	# Add all cells from old and new positions
+	for offset in old_offsets:
+		sweep_cells.append(pivot + offset)
+	for offset in new_offsets:
+		sweep_cells.append(pivot + offset)
+	
+	# Get all arms (excluding pivot)
+	var arms = []
+	for i in [1, 2]:
+		arms.append(pivot + old_offsets[i])
+		arms.append(pivot + new_offsets[i])
+	
+	# Find bounding box
+	var xs = [pivot.x]
+	var ys = [pivot.y]
+	for cell in arms:
+		xs.append(cell.x)
+		ys.append(cell.y)
+	var min_x = xs.min()
+	var max_x = xs.max()
+	var min_y = ys.min()
+	var max_y = ys.max()
+	
+	# Add all cells in bounding box
+	for x in range(min_x, max_x + 1):
+		for y in range(min_y, max_y + 1):
+			sweep_cells.append(Vector2i(x, y))
+	
+	# Remove duplicates
+	var unique_cells = []
+	for cell in sweep_cells:
+		if cell not in unique_cells:
+			unique_cells.append(cell)
+	sweep_cells = unique_cells
+	
+	# Check for collision with boxes or other hinges
+	for cell in sweep_cells:
+		for b in boxes:
+			if Vector2(cell) in b.get_occupied_cells():
+				return false
+		for h in hinges:
+			if h != self and cell in h.get_occupied_cells():
+				return false
+		for w in walls:
+			if cell == w:
+				return false
+	return true
+
+func rotate_hinge(clockwise: bool):
+	orientation = (orientation + (1 if clockwise else 3)) % 4
+	update_visual()
+
+func get_rotation_direction(to_cell: Vector2i, dir: Vector2):
+	var offsets = L_OFFSETS[orientation]
+	var a_cell = pivot + offsets[1]
+	var b_cell = pivot + offsets[2]
+	
+	if to_cell == a_cell:
+		# Arm A: direction depends on orientation
+		match orientation:
+			0: # Up
+				if dir.x > 0: return "clock"
+				elif dir.x < 0: return "anti2"
+			1: # Right
+				if dir.y > 0: return "clock"
+				elif dir.y < 0: return "anti2"
+			2: # Down
+				if dir.x < 0: return "clock"
+				elif dir.x > 0: return "anti2"
+			3: # Left
+				if dir.y < 0: return "clock"
+				elif dir.y > 0: return "anti2"
+		return "block"
+	elif to_cell == b_cell:
+		# Arm B: direction depends on orientation
+		match orientation:
+			0: # Up
+				if dir.y < 0: return "anti"
+				elif dir.y > 0: return "clock2"
+			1: # Right
+				if dir.x > 0: return "anti"
+				elif dir.x < 0: return "clock2"
+			2: # Down
+				if dir.y > 0: return "anti"
+				elif dir.y < 0: return "clock2"
+			3: # Left
+				if dir.x < 0: return "anti"
+				elif dir.x > 0: return "clock2"
+		return "block"
+	elif to_cell == pivot:
+		return "block"
+	return null

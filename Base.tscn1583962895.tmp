@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://cfi1d3jt0h2jy" path="res://boxes/Box2x1.tscn" id="8_0k0ig"]
 [ext_resource type="PackedScene" uid="uid://cqjnl1hq10xb6" path="res://boxes/Box3x3.tscn" id="8_pn4t7"]
 [ext_resource type="Texture2D" uid="uid://c6gw5d6ewmyi8" path="res://sprites/trigger.png" id="8_trn2v"]
-[ext_resource type="PackedScene" uid="uid://ddj7so1y2ma6j" path="res://hinges/HingeL.tscn" id="10_lf5p6"]
+[ext_resource type="PackedScene" uid="uid://ddj7so1y2ma6j" path="res://hinges/Hinge3-1.tscn" id="10_lf5p6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wkp8b"]
 atlas = ExtResource("3_03owx")
@@ -259,41 +259,36 @@ sprite_frames = SubResource("SpriteFrames_5vvyt")
 animation = &"idle"
 offset = Vector2(-8, -8)
 
-[node name="Boxes3" type="Node2D" parent="." unique_id=931249810]
+[node name="Boxes" type="Node2D" parent="." unique_id=931249810]
 
-[node name="Box" parent="Boxes3" unique_id=1998792388 instance=ExtResource("4_4phwr")]
+[node name="Box" parent="Boxes" unique_id=1998792388 instance=ExtResource("4_4phwr")]
 position = Vector2(32, -16)
 
-[node name="Box2" parent="Boxes3" unique_id=169115287 instance=ExtResource("4_4phwr")]
+[node name="Box2" parent="Boxes" unique_id=169115287 instance=ExtResource("4_4phwr")]
 position = Vector2(-32, -16)
 
-[node name="Box3" parent="Boxes3" unique_id=1503775969 instance=ExtResource("4_4phwr")]
+[node name="Box3" parent="Boxes" unique_id=1503775969 instance=ExtResource("4_4phwr")]
 position = Vector2(16, -32)
 
-[node name="Box5" parent="Boxes3" unique_id=2135255633 instance=ExtResource("5_6ol3t")]
+[node name="Box5" parent="Boxes" unique_id=2135255633 instance=ExtResource("5_6ol3t")]
 position = Vector2(16, 16)
 
-[node name="Box4" parent="Boxes3" unique_id=1285350349 instance=ExtResource("6_4p605")]
+[node name="Box4" parent="Boxes" unique_id=1285350349 instance=ExtResource("6_4p605")]
 position = Vector2(80, 16)
 
-[node name="Box6" parent="Boxes3" unique_id=128698973 instance=ExtResource("7_2racw")]
+[node name="Box6" parent="Boxes" unique_id=128698973 instance=ExtResource("7_2racw")]
 position = Vector2(-32, 32)
 
-[node name="Box8" parent="Boxes3" unique_id=473253969 instance=ExtResource("8_pn4t7")]
+[node name="Box8" parent="Boxes" unique_id=473253969 instance=ExtResource("8_pn4t7")]
 position = Vector2(16, 64)
 
-[node name="Box7" parent="Boxes3" unique_id=1560423561 instance=ExtResource("8_0k0ig")]
+[node name="Box7" parent="Boxes" unique_id=1560423561 instance=ExtResource("8_0k0ig")]
 position = Vector2(-64, 16)
-
-[node name="Boxes" type="Node2D" parent="." unique_id=1553798389]
-
-[node name="Box" parent="Boxes" unique_id=590209215 instance=ExtResource("4_4phwr")]
-position = Vector2(16, -80)
 
 [node name="Hinges" type="Node2D" parent="." unique_id=581852878]
 
 [node name="Hinge" parent="Hinges" unique_id=808708119 instance=ExtResource("10_lf5p6")]
-position = Vector2(-16, -64)
+position = Vector2(-48, -64)
 
 [node name="Floors" type="TileMapLayer" parent="." unique_id=1905753187]
 texture_filter = 1

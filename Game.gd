@@ -9,6 +9,7 @@ extends Node2D
 @onready var goals : TileMapLayer = $Goals
 @onready var player_node : Node2D = $Player
 @onready var boxes_root : Node2D = $Boxes
+@onready var hinges_root : Node2D = $Hinges
 #@onready var box : Node2D = $Box
 
 var player_cell : Vector2 = Vector2.ZERO
@@ -17,7 +18,9 @@ var last_dir = Vector2.ZERO
 var move_history : Array = [] # undo stack
 var win_anim_playing := false
 var boxes : Array = []
+var hinges : Array = []
 # var boxes : Array = [] # of Node (Box instances)
+
 # Startup
 func _ready():
 	# print("BASE LEVEL")
@@ -40,6 +43,13 @@ func _ready():
 			child.set_box_cell_ui(child.position, floors) # Box.gd
 			# child.cell = floors.local_to_map(child.position - floors.tile_set.tile_size * 0.5)
 			boxes.append(child)
+	
+	hinges = []
+	for child in hinges_root.get_children():
+		if child is Node2D and child.has_method("can_rotate"):
+			child.set_hinge_cell_ui(child.position, floors) # Hinge.gd
+			hinges.append(child)
+	
 	# Star animation
 	$Player/AnimatedSprite2D.play("idle")
 	
@@ -106,6 +116,32 @@ func attempt_move(dir : Vector2) -> void:
 	# Check for holes
 	if holes.get_cell_source_id(Vector2i(to_cell)) != -1:
 		return
+	
+	# Hinge rotation
+	for h in hinges:
+		# print(h.get_occupied_cells())
+		var rotate_dir = h.get_rotation_direction(Vector2i(to_cell), dir)
+		var rotate_mov = null
+		if rotate_dir != null:
+			# print(rotate_dir)
+			if rotate_dir == "clock":
+				rotate_mov = true
+			elif rotate_dir == "clock2":
+				rotate_mov = true
+			elif rotate_dir == "anti":
+				rotate_mov = false
+			elif rotate_dir == "anti2":
+				rotate_mov = false
+			else:
+				return
+			if h.can_rotate(rotate_mov, boxes, hinges, walls.get_used_cells()):
+				h.rotate_hinge(rotate_mov)
+				if rotate_dir == "clock2" or rotate_dir == "anti2":
+					to_cell += dir # move again
+				# return # Hinge rotated, block player movement this turn
+				# print(h.get_occupied_cells())
+			else:
+				return # Rotation blocked, also block movement
 	
 	# Check for box at target cell
 	var box_to_push = null

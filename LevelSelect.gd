@@ -6,7 +6,7 @@ var current_index := 0
 var name_map = {
 	# "Level1-1.tscn": "Level 1-1",
 	"Level1-2.tscn": "Level 1-2",
-	# "Level1-3.tscn": "Level 1-3",
+	"Level1-3.tscn": "Level 1-3",
 	"Level1-4.tscn": "Level 1-4",
 	# "Level1-5.tscn": "Level 1-5",
 	# "Level1-6.tscn": "Level 1-6",
