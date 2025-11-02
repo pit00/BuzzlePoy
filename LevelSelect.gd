@@ -15,7 +15,7 @@ var name_map = {
 	# "Level1-9.tscn": "Level 1-9",
 	"Level1-10.tscn": "Level 1-10",
 	"Level1-11.tscn": "Level 1-11",
-	# "Level1-12.tscn": "Level 1-12",
+	"Level1-12.tscn": "Level 1-12",
 	"Level1-13.tscn": "Level 1-13",
 	"Level1-14.tscn": "Level 1-14",
 	# "Level1-15.tscn": "Level 1-15",

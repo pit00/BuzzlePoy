@@ -9,7 +9,8 @@ extends Node2D
 @onready var goals : TileMapLayer = $Goals
 @onready var player_node : Node2D = $Player
 @onready var boxes_root : Node2D = $Boxes
-@onready var hinges_root : Node2D = $Hinges
+@onready var hinges_l_root : Node2D = $HingesL
+@onready var hinges_x_root : Node2D = $HingesX
 #@onready var box : Node2D = $Box
 
 var player_cell : Vector2 = Vector2.ZERO
@@ -18,7 +19,8 @@ var last_dir = Vector2.ZERO
 var move_history : Array = [] # undo stack
 var win_anim_playing := false
 var boxes : Array = []
-var hinges : Array = []
+var hinges_l : Array = []
+var hinges_x : Array = []
 # var boxes : Array = [] # of Node (Box instances)
 
 # Startup
@@ -38,17 +40,25 @@ func _ready():
 	# Initialize all boxes
 	# box.set_box_cell_ui(box.position, floors) # Box.gd
 	boxes = []
-	for child in boxes_root.get_children():
-		if child is Node2D and child.has_method("move_to_cell"):
-			child.set_box_cell_ui(child.position, floors) # Box.gd
-			# child.cell = floors.local_to_map(child.position - floors.tile_set.tile_size * 0.5)
-			boxes.append(child)
+	if boxes_root != null:
+		for child in boxes_root.get_children():
+			if child is Node2D and child.has_method("move_to_cell"):
+				child.set_box_cell_ui(child.position, floors) # Box.gd
+				# child.cell = floors.local_to_map(child.position - floors.tile_set.tile_size * 0.5)
+				boxes.append(child)
 	
-	hinges = []
-	for child in hinges_root.get_children():
-		if child is Node2D and child.has_method("can_rotate"):
-			child.set_hinge_cell_ui(child.position, floors) # Hinge.gd
-			hinges.append(child)
+	hinges_l = []
+	if hinges_l_root != null:
+		for child in hinges_l_root.get_children():
+			if child is Node2D and child.has_method("can_rotate"):
+				child.set_hinge_cell_ui(child.position, floors) # HingeL.gd
+				hinges_l.append(child)
+	hinges_x = []
+	if hinges_x_root != null:
+		for child in hinges_x_root.get_children():
+			if child is Node2D and child.has_method("can_rotate"):
+				child.set_hinge_cell_ui(child.position, floors) # HingeX.gd
+				hinges_x.append(child)
 	
 	# Star animation
 	$Player/AnimatedSprite2D.play("idle")
@@ -118,7 +128,7 @@ func attempt_move(dir : Vector2) -> void:
 		return
 	
 	# Hinge rotation
-	for h in hinges:
+	for h in hinges_l:
 		# print(h.get_occupied_cells())
 		var rotate_dir = h.get_rotation_direction(Vector2i(to_cell), dir)
 		var rotate_mov = null
@@ -134,7 +144,31 @@ func attempt_move(dir : Vector2) -> void:
 				rotate_mov = false
 			else:
 				return
-			if h.can_rotate(rotate_mov, boxes, hinges, walls.get_used_cells()):
+			if h.can_rotate(rotate_mov, boxes, hinges_l, hinges_x, walls.get_used_cells()):
+				h.rotate_hinge(rotate_mov)
+				if rotate_dir == "clock2" or rotate_dir == "anti2":
+					to_cell += dir # move again
+				# return # Hinge rotated, block player movement this turn
+				# print(h.get_occupied_cells())
+			else:
+				return # Rotation blocked, also block movement
+	for h in hinges_x:
+		# print(h.get_occupied_cells())
+		var rotate_dir = h.get_rotation_direction(Vector2i(to_cell), dir)
+		var rotate_mov = null
+		if rotate_dir != null:
+			# print(rotate_dir)
+			if rotate_dir == "clock":
+				rotate_mov = true
+			elif rotate_dir == "clock2":
+				rotate_mov = true
+			elif rotate_dir == "anti":
+				rotate_mov = false
+			elif rotate_dir == "anti2":
+				rotate_mov = false
+			else:
+				return
+			if h.can_rotate(rotate_mov, boxes, hinges_l, hinges_x, walls.get_used_cells()):
 				h.rotate_hinge(rotate_mov)
 				if rotate_dir == "clock2" or rotate_dir == "anti2":
 					to_cell += dir # move again
@@ -161,6 +195,12 @@ func attempt_move(dir : Vector2) -> void:
 				return
 			for other in boxes:
 				if other != box_to_push and nc in other.get_occupied_cells():
+					return
+			for h in hinges_l:
+				if Vector2i(nc) in h.get_occupied_cells():
+					return
+			for h in hinges_x:
+				if Vector2i(nc) in h.get_occupied_cells():
 					return
 		# Move box
 		box_to_push.cell += dir
