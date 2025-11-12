@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://u7nd8vwxys01"]
+
+[ext_resource type="Script" uid="uid://cob0x1cuhreg8" path="res://hinges/HingeI.gd" id="1_18hmo"]
+[ext_resource type="Texture2D" uid="uid://c6gw5d6ewmyi8" path="res://sprites/trigger.png" id="2_k0n0h"]
+
+[node name="Hinge" type="Node2D" unique_id=808708119]
+script = ExtResource("1_18hmo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=335782879]
+z_index = 10
+texture_filter = 1
+position = Vector2(-8, -8)
+texture = ExtResource("2_k0n0h")
+centered = false
+offset = Vector2(-8, -24)
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 48)

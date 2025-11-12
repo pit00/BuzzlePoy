@@ -1,7 +1,8 @@
 extends Node2D
 
 var pivot: Vector2i = Vector2i(2, 2) # Set as needed
-var orientation: int = 0 # 0=up, 1=right, 2=down, 3=left
+# var orientation: int = 0 # 0=up, 1=right, 2=down, 3=left
+@export var orientation: int = 0 # 0=up, 1=right, 2=down, 3=left
 
 const L_OFFSETS = [
 	[Vector2i(0,0), Vector2i(0,-1), Vector2i(1,0)],   # 0°
@@ -9,6 +10,9 @@ const L_OFFSETS = [
 	[Vector2i(0,0), Vector2i(0,1), Vector2i(-1,0)],   # 180°
 	[Vector2i(0,0), Vector2i(-1,0), Vector2i(0,-1)]   # 270°
 ]
+
+func _ready():
+	update_visual()
 
 func set_hinge_cell_ui(cell_pos: Vector2, tilemap: TileMapLayer):
 	pivot = (cell_pos / 16) - Vector2(1, 1)
@@ -27,7 +31,7 @@ func update_visual():
 	if has_node("Sprite2D"):
 		$Sprite2D.rotation_degrees = 90 * orientation
 
-func can_rotate(clockwise: bool, boxes: Array, hinges_l: Array, hinges_x: Array, walls: Array) -> bool:
+func can_rotate(clockwise: bool, boxes: Array, hinges_l: Array, hinges_x: Array, hinges_i: Array, walls: Array) -> bool:
 	var old_orientation = orientation
 	var new_orientation = (orientation + (1 if clockwise else 3)) % 4
 	var old_offsets = L_OFFSETS[old_orientation]
@@ -78,6 +82,9 @@ func can_rotate(clockwise: bool, boxes: Array, hinges_l: Array, hinges_x: Array,
 			if h != self and cell in h.get_occupied_cells():
 				return false
 		for h in hinges_x:
+			if h != self and cell in h.get_occupied_cells():
+				return false
+		for h in hinges_i:
 			if h != self and cell in h.get_occupied_cells():
 				return false
 		for w in walls:
