@@ -28,7 +28,7 @@ func update_visual():
 	if has_node("Sprite2D"):
 		$Sprite2D.rotation_degrees = 90 * orientation
 
-func can_rotate(clockwise: bool, boxes: Array, hinges_l: Array, hinges_x: Array, hinges_i: Array, walls: Array) -> bool:
+func can_rotate(clockwise: bool, boxes: Array, hinges_t: Array, hinges_l: Array, hinges_x: Array, hinges_i: Array, walls: Array) -> bool:
 	var old_orientation = orientation
 	var new_orientation = (orientation + (1 if clockwise else 3)) % 4
 	var old_cells = []
@@ -73,6 +73,9 @@ func can_rotate(clockwise: bool, boxes: Array, hinges_l: Array, hinges_x: Array,
 	for cell in sweep_cells:
 		for b in boxes:
 			if Vector2(cell) in b.get_occupied_cells():
+				return false
+		for h in hinges_t:
+			if h != self and cell in h.get_occupied_cells():
 				return false
 		for h in hinges_l:
 			if h != self and cell in h.get_occupied_cells():

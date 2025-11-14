@@ -4,7 +4,7 @@ extends Control
 var level_scenes := []
 var current_index := 0
 var name_map = {
-	# "Level1-1.tscn": "Level 1-1",
+	"Level1-1.tscn": "Level 1-1",
 	"Level1-2.tscn": "Level 1-2",
 	"Level1-3.tscn": "Level 1-3",
 	"Level1-4.tscn": "Level 1-4",
@@ -12,7 +12,7 @@ var name_map = {
 	# "Level1-6.tscn": "Level 1-6",
 	"Level1-7.tscn": "Level 1-7",
 	# "Level1-8.tscn": "Level 1-8",
-	# "Level1-9.tscn": "Level 1-9",
+	"Level1-9.tscn": "Level 1-9",
 	"Level1-10.tscn": "Level 1-10",
 	"Level1-11.tscn": "Level 1-11",
 	"Level1-12.tscn": "Level 1-12",
@@ -29,7 +29,7 @@ var name_map = {
 	# "Level2-3.tscn": "Level 2-3",
 	# "Level2-4.tscn": "Level 2-4",
 	# "Level2-5.tscn": "Level 2-5",
-	# "Level2-6.tscn": "Level 2-6",
+	"Level2-6.tscn": "Level 2-6",
 	# "Level2-7.tscn": "Level 2-7",
 	# "Level2-8.tscn": "Level 2-8",
 	# "Level2-9.tscn": "Level 2-9",
@@ -37,7 +37,7 @@ var name_map = {
 	# "Level2-11.tscn": "Level 2-11",
 	# "Level2-12.tscn": "Level 2-12",
 	# "Level2-13.tscn": "Level 2-13",
-	# "Level2-14.tscn": "Level 2-14",
+	"Level2-14.tscn": "Level 2-14",
 	# "Level2-15.tscn": "Level 2-15",
 	# "Level2-16.tscn": "Level 2-16",
 	# "Level2-17.tscn": "Level 2-17",
