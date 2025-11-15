@@ -305,15 +305,12 @@ position = Vector2(16, 48)
 [node name="HingesT" type="Node2D" parent="." unique_id=1478216273]
 
 [node name="Hinge2" parent="HingesT" unique_id=630987870 instance=ExtResource("11_qnuxx")]
-position = Vector2(-80, -48)
+position = Vector2(80, 32)
 
 [node name="HingesS" type="Node2D" parent="." unique_id=2047241555]
 
 [node name="Hinge" parent="HingesS" unique_id=659946323 instance=ExtResource("12_tx1ci")]
-position = Vector2(-96, -16)
-
-[node name="Hinge2" parent="HingesS" unique_id=1767483727 instance=ExtResource("12_tx1ci")]
-position = Vector2(-64, 16)
+position = Vector2(-48, -16)
 
 [node name="Floors" type="TileMapLayer" parent="." unique_id=1905753187]
 texture_filter = 1

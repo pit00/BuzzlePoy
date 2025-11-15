@@ -3,7 +3,7 @@ extends Node2D
 var pivot: Vector2i = Vector2i(2, 2) # Set as needed
 var orientation: int = 0 # 0=up, 1=right, 2=down, 3=left
 
-const CROSS_OFFSETS = [
+const X_OFFSETS = [
 	[Vector2i(0,0), Vector2i(0,-1), Vector2i(1,0), Vector2i(0,1), Vector2i(-1,0)],   # 0°
 	[Vector2i(0,0), Vector2i(1,0), Vector2i(0,1), Vector2i(-1,0), Vector2i(0,-1)],   # 90°
 	[Vector2i(0,0), Vector2i(0,1), Vector2i(-1,0), Vector2i(0,-1), Vector2i(1,0)],   # 180°
@@ -16,7 +16,7 @@ func set_hinge_cell_ui(cell_pos: Vector2, tilemap: TileMapLayer):
 
 func get_occupied_cells() -> Array:
 	var cells = []
-	for offset in CROSS_OFFSETS[orientation]:
+	for offset in X_OFFSETS[orientation]:
 		cells.append(pivot + offset)
 	return cells
 
@@ -24,11 +24,11 @@ func update_visual():
 	if has_node("Sprite2D"):
 		$Sprite2D.rotation_degrees = 90 * orientation
 
-func can_rotate(clockwise: bool, boxes: Array, hinges_t: Array, hinges_l: Array, hinges_x: Array, hinges_i: Array, walls: Array) -> bool:
+func can_rotate(clockwise: bool, boxes: Array, hinges_s: Array, hinges_t: Array, hinges_l: Array, hinges_x: Array, hinges_i: Array, walls: Array) -> bool:
 	var old_orientation = orientation
 	var new_orientation = (orientation + (1 if clockwise else 3)) % 4
-	var old_offsets = CROSS_OFFSETS[old_orientation]
-	var new_offsets = CROSS_OFFSETS[new_orientation]
+	var old_offsets = X_OFFSETS[old_orientation]
+	var new_offsets = X_OFFSETS[new_orientation]
 	var sweep_cells = []
 	
 	# Add all cells from old and new positions
@@ -83,6 +83,12 @@ func can_rotate(clockwise: bool, boxes: Array, hinges_t: Array, hinges_l: Array,
 		for h in hinges_i:
 			if h != self and cell in h.get_occupied_cells():
 				return false
+		for h in hinges_i:
+			if h != self and cell in h.get_occupied_cells():
+				return false
+		for h in hinges_s:
+			if h != self and cell in h.get_occupied_cells():
+				return false
 		for w in walls:
 			if cell == w:
 				return false
@@ -98,7 +104,7 @@ func rotate_hinge(clockwise: bool):
 	# 	$Sprite2D.rotation_degrees -= 90
 
 func get_rotation_direction(to_cell: Vector2i, dir: Vector2):
-	var offsets = CROSS_OFFSETS[orientation]
+	var offsets = X_OFFSETS[orientation]
 	# Arm indices: 1=up, 2=right, 3=down, 4=left (for orientation 0)
 	# Adjust direction logic for each orientation
 	# Up arm

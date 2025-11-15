@@ -13,7 +13,7 @@ extends Node2D
 @onready var hinges_x_root : Node2D = $HingesX
 @onready var hinges_i_root : Node2D = $HingesI
 @onready var hinges_t_root : Node2D = $HingesT
-# @onready var hinges_s_root : Node2D = $HingesS
+@onready var hinges_s_root : Node2D = $HingesS
 #@onready var box : Node2D = $Box
 
 var player_cell : Vector2 = Vector2.ZERO
@@ -26,7 +26,7 @@ var hinges_l : Array = []
 var hinges_x : Array = []
 var hinges_i : Array = []
 var hinges_t : Array = []
-# var hinges_s : Array = []
+var hinges_s : Array = []
 # var boxes : Array = [] # of Node (Box instances)
 
 # Startup
@@ -77,12 +77,12 @@ func _ready():
 			if child is Node2D and child.has_method("can_rotate"):
 				child.set_hinge_cell_ui(child.position, floors) # HingeT.gd
 				hinges_t.append(child)
-	# hinges_s = []
-	# if hinges_s_root != null:
-	# 	for child in hinges_s_root.get_children():
-	# 		if child is Node2D and child.has_method("can_rotate"):
-	# 			child.set_hinge_cell_ui(child.position, floors) # HingeS.gd
-	# 			hinges_s.append(child)
+	hinges_s = []
+	if hinges_s_root != null:
+		for child in hinges_s_root.get_children():
+			if child is Node2D and child.has_method("can_rotate"):
+				child.set_hinge_cell_ui(child.position, floors) # HingeS.gd
+				hinges_s.append(child)
 	
 	# Star animation
 	$Player/AnimatedSprite2D.play("idle")
@@ -168,7 +168,7 @@ func attempt_move(dir : Vector2) -> void:
 				rotate_mov = false
 			else:
 				return
-			if h.can_rotate(rotate_mov, boxes, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
+			if h.can_rotate(rotate_mov, boxes, hinges_s, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
 				h.rotate_hinge(rotate_mov)
 				if rotate_dir == "clock2" or rotate_dir == "anti2":
 					to_cell += dir # move again
@@ -192,7 +192,7 @@ func attempt_move(dir : Vector2) -> void:
 				rotate_mov = false
 			else:
 				return
-			if h.can_rotate(rotate_mov, boxes, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
+			if h.can_rotate(rotate_mov, boxes, hinges_s, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
 				h.rotate_hinge(rotate_mov)
 				if rotate_dir == "clock2" or rotate_dir == "anti2":
 					to_cell += dir # move again
@@ -216,7 +216,7 @@ func attempt_move(dir : Vector2) -> void:
 				rotate_mov = false
 			else:
 				return
-			if h.can_rotate(rotate_mov, boxes, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
+			if h.can_rotate(rotate_mov, boxes, hinges_s, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
 				h.rotate_hinge(rotate_mov)
 				if rotate_dir == "clock2" or rotate_dir == "anti2":
 					to_cell += dir # move again
@@ -234,7 +234,25 @@ func attempt_move(dir : Vector2) -> void:
 				rotate_mov = false
 			else:
 				return
-			if h.can_rotate(rotate_mov, boxes, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
+			if h.can_rotate(rotate_mov, boxes, hinges_s, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
+				h.rotate_hinge(rotate_mov)
+				# if rotate_dir == "clock2" or rotate_dir == "anti2":
+				# 	to_cell += dir # move again
+			else:
+				return # Rotation blocked, also block movement
+	for h in hinges_s:
+		# print(h.get_occupied_cells())
+		var rotate_dir = h.get_rotation_direction(Vector2i(to_cell), dir)
+		var rotate_mov = null
+		if rotate_dir != null:
+			# print(rotate_dir)
+			if rotate_dir == "clock":
+				rotate_mov = true
+			elif rotate_dir == "anti":
+				rotate_mov = false
+			else:
+				return
+			if h.can_rotate(rotate_mov, boxes, hinges_s, hinges_t, hinges_l, hinges_x, hinges_i, walls.get_used_cells()):
 				h.rotate_hinge(rotate_mov)
 				# if rotate_dir == "clock2" or rotate_dir == "anti2":
 				# 	to_cell += dir # move again
@@ -270,6 +288,9 @@ func attempt_move(dir : Vector2) -> void:
 				if Vector2i(nc) in h.get_occupied_cells():
 					return
 			for h in hinges_t:
+				if Vector2i(nc) in h.get_occupied_cells():
+					return
+			for h in hinges_s:
 				if Vector2i(nc) in h.get_occupied_cells():
 					return
 		# Move box
